@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -16,13 +12,14 @@ namespace API
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build(); //here are are building the web host for our application
             
             using (var scope = host.Services.CreateScope()){
                 var Services = scope.ServiceProvider;
                 try{
                     var context = Services.GetRequiredService<DataContext>();
                     context.Database.Migrate(); //anytime we start the app, we'll check if DB exists, if not one will be created
+                    Seed.SeedData(context);
                     //based on our migrations
                 }
                 catch(Exception ex){
@@ -30,11 +27,13 @@ namespace API
                     logger.LogError(ex, "An error occured during migration");
                 }
             }
+            //run the web server and start listening for HTTP requests
             host.Run(); //creates DB based on migration, should see new DB file called reactivities.db --> created in API project
         }
 
+        //the static method CreateDefaultBuilder of the Host class does the following: sets up web server, loading configuation, logging
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
+            Host.CreateDefaultBuilder(args)   
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

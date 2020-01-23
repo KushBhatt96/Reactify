@@ -1,18 +1,21 @@
-﻿using System;
-using Domain;
+﻿using Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence
 {
-    public class DataContext : DbContext
+    public class DataContext : DbContext   //DataContext extends DbContext class provided by Entity Framework Core
     {
-        public DataContext(DbContextOptions options) : base(options)
+        //below we are creating a constructor for the DataContext class and passing it a DbContextOptions object called "options"
+        //we then pass the "options" to the base DbContext class using --> : base(options)
+        public DataContext(DbContextOptions options) : base(options)   
         {
 
         }
 
 
         public DbSet<Value> Values { get; set; }
+
+        public DbSet<Activity> Activities {get; set;}
 
         protected override void OnModelCreating(ModelBuilder builder){  //seeding data in DB using entity framework
             builder.Entity<Value>().HasData(
