@@ -9,7 +9,7 @@ namespace Application.Activities
 {
     public class Create
     {
-        public class Command : IRequest
+        public class Command : IRequest  //Note that this is an inner class that inherits from IRequest class
         {
             public Guid Id { get; set; }
 
@@ -26,7 +26,7 @@ namespace Application.Activities
             public string Venue { get; set; }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command> //this is another inner class that derives from IRequestHandler class of type Command
         {
             private readonly DataContext _context;
             public Handler(DataContext context)

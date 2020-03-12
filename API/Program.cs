@@ -12,7 +12,7 @@ namespace API
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build(); //here are are building the web host for our application
+            var host = CreateHostBuilder(args).Build(); //here we are building the web host for our application
             
             using (var scope = host.Services.CreateScope()){
                 var Services = scope.ServiceProvider;

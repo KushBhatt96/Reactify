@@ -17,6 +17,8 @@ namespace API
             Configuration = configuration;
         }
 
+        //seems like the Startup class has an instance variable of type Iconfiguration and this instance varibale gets passed in, in the
+        //constructor above
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -42,9 +44,9 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment()) //if executing in development
             {
-                app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage(); //then give me a nice message page if there is an exception
             }
             else{
 

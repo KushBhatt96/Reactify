@@ -13,8 +13,11 @@ namespace Persistence
         }
 
 
+        //The DbSet<entity> below basically represent our DB entites, we have a class for both Value and Activity in our Domain project
+        //list of Values
         public DbSet<Value> Values { get; set; }
 
+        //list of Activities
         public DbSet<Activity> Activities {get; set;}
 
         protected override void OnModelCreating(ModelBuilder builder){  //seeding data in DB using entity framework

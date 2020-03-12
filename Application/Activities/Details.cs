@@ -16,7 +16,7 @@ namespace Application.Activities
             public Guid Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Activity>
+        public class Handler : IRequestHandler<Query, Activity> //recall that interfaces force child class to implement their methods
         {
             private readonly DataContext _context;
 

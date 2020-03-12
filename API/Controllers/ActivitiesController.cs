@@ -28,6 +28,9 @@ namespace API.Controllers
         public async Task<ActionResult<Activity>> Details(Guid id)
         {
             return await _mediator.Send(new Details.Query{Id = id});
+            //A question that may arise is that: when exactly are we calling the handler, as there is no sign of handler being called here.
+            //Answer: The MediatR takes care of this! It knows which handler to use since we specify "Query" in IRequestHandler<>
+            //This is an example of how MediatR acts as the middleman and helps decouple our system
         }
 
         [HttpPost]
