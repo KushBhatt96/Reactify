@@ -18,6 +18,7 @@ const App = () => {
   //this is a handler that takes an id as a parameter and then we can select the activity from our list of activites based on the passed id parameter
   const handleSelectActivity = (id: String) =>{
     setSelectedActivity(activities.filter(a => a.id === id)[0])    //[0] to get the 0th (and only) element of the resulting array from filter
+    setEditMode(false);
   }
 
   const handleOpenCreateForm = () => {
@@ -25,11 +26,32 @@ const App = () => {
     setEditMode(true);
   }
 
+  const handleCreateActivity = (activity: IActivity) => {
+    setActivities([...activities, activity])
+    setSelectedActivity(activity)
+    setEditMode(false)
+  }
+
+  const handleEditActivity = (activity: IActivity) => {
+    setActivities([...activities.filter(a => a.id !== activity.id), activity])
+    setSelectedActivity(activity);
+    setEditMode(false);
+  }
+
+  const handleDeleteActivity = (id: string) => {
+    setActivities([...activities.filter(a => a.id !==id)])
+  }
+
   useEffect(() => {      //Think of the useEffect Hook as a combination of componentDidMount, componentDidUpdate, and componentWillUnmount lifecycle methods
     axios
         .get<IActivity[]>('http://localhost:5000/API/activities')   //notice that this is the server for our backend and we are just getting API/activities
         .then(response =>{
-        setActivities(response.data)     //use the response data to fill in the empty activities list upon component mount
+        let activities: IActivity[] = [];
+        response.data.forEach(activity => {
+          activity.date = activity.date.split('.')[0];
+          activities.push(activity);
+        })
+        setActivities(activities)     //use the response data to fill in the empty activities list upon component mount
     })
   }, []); //this empty array here is preventing the useEffect from running again and again after our component has mounted 
 
@@ -40,14 +62,17 @@ const App = () => {
         <NavBar openCreateForm = {handleOpenCreateForm}/>
         <Container style = {{marginTop: "7em"}}>
           <ActivityDashboard 
-          activities = {activities} 
-          selectActivity = {handleSelectActivity}    //here we are passing down a function to the child ActivityDashboard Component, hence it will have access to a parent function
-          selectedActivity = {selectedActivity!}      //the grandchild component ActivityList calls handleSelectActivity when button is clicked and passes the corresponding id
-          //then the selectedActivity gets set inside handleSelectActivity using the id passed by ActivityList grandchild and we pass the selectedActivity to ActivityDetails
-          //to show to the screen!
-          editMode = {editMode}
-          setEditMode = {setEditMode}
-          setSelectedActivity = {setSelectedActivity}
+            activities = {activities} 
+            selectActivity = {handleSelectActivity}    //here we are passing down a function to the child ActivityDashboard Component, hence it will have access to a parent function
+            selectedActivity = {selectedActivity!}      //the grandchild component ActivityList calls handleSelectActivity when button is clicked and passes the corresponding id
+            //then the selectedActivity gets set inside handleSelectActivity using the id passed by ActivityList grandchild and we pass the selectedActivity to ActivityDetails
+            //to show to the screen!
+            editMode = {editMode}
+            setEditMode = {setEditMode}
+            setSelectedActivity = {setSelectedActivity}
+            createActivity = {handleCreateActivity}
+            editActivity = {handleEditActivity}
+            deleteActivity = {handleDeleteActivity}
           />
         </Container>
       </Fragment> 
