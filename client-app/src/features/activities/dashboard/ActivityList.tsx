@@ -1,13 +1,12 @@
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useContext } from 'react'
 import { Item, Button, Label, Segment } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
 import { observer } from 'mobx-react-lite';
+import ActivityStore from '../../../app/stores/activityStore'
 
 //To reiterate, the Iprops interface is used to type check the incoming props from the parent react component
 //If the parent tries to send a prop with the incorrect type, an error message will be shown
 interface IProps {
-    activities: IActivity[];
-    selectActivity: (id: string) => void;
     deleteActivity: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
     submitting: boolean;
     target: string;
@@ -15,7 +14,9 @@ interface IProps {
 
 //Again our component here just contains a whole bunch of semantic UI elements
 //And again we've deconstructed props into activities and selectedActivity
-const ActivityList: React.FC<IProps> = ({activities, selectActivity, deleteActivity, submitting, target}) => {
+const ActivityList: React.FC<IProps> = ({deleteActivity, submitting, target}) => {
+    const activityStore = useContext(ActivityStore);
+    const {activities, selectActivity} = activityStore;
     return (
         <Segment clearing>
         <Item.Group divided>
@@ -53,4 +54,4 @@ const ActivityList: React.FC<IProps> = ({activities, selectActivity, deleteActiv
     )
 };
 
-export default observer(ActivityList)
+export default observer(ActivityList);

@@ -1,16 +1,15 @@
-import React, { SyntheticEvent } from 'react'
+import React, { SyntheticEvent, useContext } from 'react'
 import { Grid, GridColumn } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
 import ActivityList from './ActivityList'
-import { ActivityDetails } from '../details/ActivityDetails'
+import ActivityDetails from '../details/ActivityDetails'
 import { ActivityForm } from '../form/ActivityForm'
 import { observer } from 'mobx-react-lite'
+import ActivityStore from '../../../app/stores/activityStore'
 
 interface IProps {               //Type checking for the props that we receive!
     activities: IActivity[];
     selectActivity: (id: string) => void;        //selectActivity is a function passed from the parent, it takes in an id of type string, and returns void
-    selectedActivity: IActivity | null;
-    editMode: boolean;
     setEditMode: (editMode: boolean) => void      //setEditMode function expected as a prop from the parent
     setSelectedActivity: (activity: IActivity | null) => void;
     createActivity: (activity: IActivity) => void;
@@ -23,9 +22,7 @@ interface IProps {               //Type checking for the props that we receive!
 //instead of {activities, selectActivity,... below, we could have just said "props", but when using typescript its common to destructure the props as shown below
 const ActivityDashboard: React.FC<IProps> = ({
     activities, 
-    selectActivity, 
-    selectedActivity, 
-    editMode, 
+    selectActivity,
     setEditMode, 
     setSelectedActivity,
     createActivity,
@@ -34,12 +31,12 @@ const ActivityDashboard: React.FC<IProps> = ({
     submitting,
     target
 }) => {
+    const activityStore = useContext(ActivityStore)
+    const {editMode, selectedActivity} = activityStore;    //now editMode and selectedActivity are no longer props but are coming from our store!
     return (      //essentially all of the stuff below are semantic ui react elements   //width in semantic UI is 16 as opposed to 12 in bootstrap
         <Grid>
             <Grid.Column width = {10}>
                 <ActivityList 
-                activities = {activities} 
-                selectActivity = {selectActivity} 
                 deleteActivity = {deleteActivity}
                 submitting = {submitting}
                 target = {target}
@@ -48,7 +45,6 @@ const ActivityDashboard: React.FC<IProps> = ({
             <GridColumn width = {6}>
                 {selectedActivity && !editMode && 
                 (<ActivityDetails 
-                    activity={selectedActivity}
                     setEditMode={setEditMode}
                     setSelectedActivity = {setSelectedActivity}
                  />)}
