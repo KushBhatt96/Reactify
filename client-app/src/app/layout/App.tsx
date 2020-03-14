@@ -5,6 +5,7 @@ import { IActivity } from '../models/activity';
 import { NavBar } from '../../features/nav/NavBar';
 import { ActivityDashboard } from '../../features/activities/dashboard/ActivityDashboard';
 import agent from '../api/agent';
+import { LoadingComponent } from './LoadingComponent';
 
 
 
@@ -13,6 +14,8 @@ const App = () => {
   const [activities, setActivities] = useState<IActivity[]>([]) //we are setting the default state of our activities as an empty array and ensuring type safety by making it an IActivity
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);  //the selectedActivity can be of type IActivity OR null, then we can pass null as the initial state
   const [editMode, setEditMode] = useState(false);   //eidtMode state property is initially false
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
 
   //this is a handler that takes an id as a parameter and then we can select the activity from our list of activites based on the passed id parameter
@@ -27,19 +30,28 @@ const App = () => {
   }
 
   const handleCreateActivity = (activity: IActivity) => {
-    setActivities([...activities, activity])
-    setSelectedActivity(activity)
-    setEditMode(false)
+    setSubmitting(true);
+    agent.Activities.create(activity).then(()=>{      //then only occurs once the create method has completed to store the activity on the server
+      setActivities([...activities, activity])
+      setSelectedActivity(activity)
+      setEditMode(false)
+    }).then(() => setSubmitting(false))
   }
 
   const handleEditActivity = (activity: IActivity) => {
-    setActivities([...activities.filter(a => a.id !== activity.id), activity])
-    setSelectedActivity(activity);
-    setEditMode(false);
+    setSubmitting(true);
+    agent.Activities.update(activity).then(()=>{
+      setActivities([...activities.filter(a => a.id !== activity.id), activity])
+      setSelectedActivity(activity);
+      setEditMode(false);
+    }).then(() => setSubmitting(false))
   }
 
   const handleDeleteActivity = (id: string) => {
-    setActivities([...activities.filter(a => a.id !==id)])
+    setSubmitting(true);
+    agent.Activities.delete(id).then(()=>{
+      setActivities([...activities.filter(a => a.id !==id)])
+    }).then(() => setSubmitting(false))
   }
 
   useEffect(() => {      //Think of the useEffect Hook as a combination of componentDidMount, componentDidUpdate, and componentWillUnmount lifecycle methods
@@ -51,8 +63,11 @@ const App = () => {
           activities.push(activity);
         })
         setActivities(activities)     //use the response data to fill in the empty activities list upon component mount
-    })
+    }).then(() => setLoading(false));
   }, []); //this empty array here is preventing the useEffect from running again and again after our component has mounted 
+
+
+  if (loading) return <LoadingComponent content = 'Loading activities...'/>
 
     //Fragement is just a replacement for div, that comes with react
     //Use Fragment when no styling needs to be applied to the outer container
@@ -72,6 +87,7 @@ const App = () => {
             createActivity = {handleCreateActivity}
             editActivity = {handleEditActivity}
             deleteActivity = {handleDeleteActivity}
+            submitting={submitting}
           />
         </Container>
       </Fragment> 

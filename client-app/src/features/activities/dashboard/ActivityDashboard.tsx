@@ -15,6 +15,7 @@ interface IProps {               //Type checking for the props that we receive!
     createActivity: (activity: IActivity) => void;
     editActivity: (activity: IActivity) => void;
     deleteActivity: (id: string) => void;
+    submitting: boolean;
 }
 
 //instead of {activities, selectActivity,... below, we could have just said "props", but when using typescript its common to destructure the props as shown below
@@ -27,12 +28,18 @@ export const ActivityDashboard: React.FC<IProps> = ({
     setSelectedActivity,
     createActivity,
     editActivity,
-    deleteActivity
+    deleteActivity,
+    submitting
 }) => {
     return (      //essentially all of the stuff below are semantic ui react elements   //width in semantic UI is 16 as opposed to 12 in bootstrap
         <Grid>
             <Grid.Column width = {10}>
-                <ActivityList activities = {activities} selectActivity = {selectActivity} deleteActivity = {deleteActivity}/>
+                <ActivityList 
+                activities = {activities} 
+                selectActivity = {selectActivity} 
+                deleteActivity = {deleteActivity}
+                submitting = {submitting}
+                />
             </Grid.Column>
             <GridColumn width = {6}>
                 {selectedActivity && !editMode && 
@@ -47,6 +54,7 @@ export const ActivityDashboard: React.FC<IProps> = ({
                 activity={selectedActivity!} 
                 createActivity = {createActivity} 
                 editActivity = {editActivity}
+                submitting = {submitting}
                 />}
             </GridColumn>
         </Grid>

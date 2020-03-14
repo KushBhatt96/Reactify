@@ -8,11 +8,12 @@ interface IProps {
     activities: IActivity[];
     selectActivity: (id: string) => void;
     deleteActivity: (id: string) => void;
+    submitting: boolean;
 }
 
 //Again our component here just contains a whole bunch of semantic UI elements
 //And again we've deconstructed props into activities and selectedActivity
-export const ActivityList: React.FC<IProps> = ({activities, selectActivity, deleteActivity}) => {
+export const ActivityList: React.FC<IProps> = ({activities, selectActivity, deleteActivity, submitting}) => {
     return (
         <Segment clearing>
         <Item.Group divided>
@@ -33,6 +34,7 @@ export const ActivityList: React.FC<IProps> = ({activities, selectActivity, dele
                         color = "blue"
                         />
                         <Button
+                        loading = {submitting}
                         onClick = {() => deleteActivity(activity.id)}   //when we click this button our selectedActivity is goning be passed in our state in our App component 
                         floated = "right" 
                         content = "delete" 
