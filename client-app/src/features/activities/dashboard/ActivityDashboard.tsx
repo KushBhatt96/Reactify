@@ -1,9 +1,10 @@
 import React, { SyntheticEvent } from 'react'
 import { Grid, GridColumn } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
-import { ActivityList } from './ActivityList'
+import ActivityList from './ActivityList'
 import { ActivityDetails } from '../details/ActivityDetails'
 import { ActivityForm } from '../form/ActivityForm'
+import { observer } from 'mobx-react-lite'
 
 interface IProps {               //Type checking for the props that we receive!
     activities: IActivity[];
@@ -20,7 +21,7 @@ interface IProps {               //Type checking for the props that we receive!
 }
 
 //instead of {activities, selectActivity,... below, we could have just said "props", but when using typescript its common to destructure the props as shown below
-export const ActivityDashboard: React.FC<IProps> = ({
+const ActivityDashboard: React.FC<IProps> = ({
     activities, 
     selectActivity, 
     selectedActivity, 
@@ -62,4 +63,6 @@ export const ActivityDashboard: React.FC<IProps> = ({
             </GridColumn>
         </Grid>
     )
-}
+};
+
+export default observer(ActivityDashboard);

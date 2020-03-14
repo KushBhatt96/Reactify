@@ -1,14 +1,20 @@
-import React, {useState, useEffect, Fragment, SyntheticEvent} from 'react';
+import React, {useState, useEffect, Fragment, SyntheticEvent, useContext} from 'react';
 import { Container } from 'semantic-ui-react'
 import { IActivity } from '../models/activity';
 import { NavBar } from '../../features/nav/NavBar';
-import { ActivityDashboard } from '../../features/activities/dashboard/ActivityDashboard';
+import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
 import agent from '../api/agent';
 import { LoadingComponent } from './LoadingComponent';
+import ActivityStore from '../stores/activityStore'
+import {observer} from 'mobx-react-lite';
 
 
 
 const App = () => {
+
+  const activityStore = useContext(ActivityStore);
+
+
   //below are all state properties, that each have their own setState function --> we are using hooks to create them
   const [activities, setActivities] = useState<IActivity[]>([]) //we are setting the default state of our activities as an empty array and ensuring type safety by making it an IActivity
   const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);  //the selectedActivity can be of type IActivity OR null, then we can pass null as the initial state
@@ -56,32 +62,26 @@ const App = () => {
   }
 
   useEffect(() => {      //Think of the useEffect Hook as a combination of componentDidMount, componentDidUpdate, and componentWillUnmount lifecycle methods
-      agent.Activities.list()
-        .then(response =>{
-        let activities: IActivity[] = [];
-        response.forEach((activity) => {
-          activity.date = activity.date.split('.')[0];
-          activities.push(activity);
-        })
-        setActivities(activities)     //use the response data to fill in the empty activities list upon component mount
-    }).then(() => setLoading(false));
-  }, []); //this empty array here is preventing the useEffect from running again and again after our component has mounted 
+    activityStore.loadActivities();
+  }, [activityStore]); //activityStore as a dependecy when using stores//this empty array here is preventing the useEffect from running again and again after our component has mounted 
 
 
-  if (loading) return <LoadingComponent content = 'Loading activities...'/>
+  if (activityStore.loadingInitial) return <LoadingComponent content = 'Loading activities...'/>
 
     //Fragement is just a replacement for div, that comes with react
     //Use Fragment when no styling needs to be applied to the outer container
+    //here we are passing down a function to the child ActivityDashboard Component, hence it will have access to a parent function
+    //the grandchild component ActivityList calls handleSelectActivity when button is clicked and passes the corresponding id
+    //then the selectedActivity gets set inside handleSelectActivity using the id passed by ActivityList grandchild and we pass the selectedActivity to ActivityDetails
+    //to show to the screen!
     return ( 
       <Fragment>  
         <NavBar openCreateForm = {handleOpenCreateForm}/>
         <Container style = {{marginTop: "7em"}}>
           <ActivityDashboard 
-            activities = {activities} 
-            selectActivity = {handleSelectActivity}    //here we are passing down a function to the child ActivityDashboard Component, hence it will have access to a parent function
-            selectedActivity = {selectedActivity!}      //the grandchild component ActivityList calls handleSelectActivity when button is clicked and passes the corresponding id
-            //then the selectedActivity gets set inside handleSelectActivity using the id passed by ActivityList grandchild and we pass the selectedActivity to ActivityDetails
-            //to show to the screen!
+            activities = {activityStore.activities} 
+            selectActivity = {handleSelectActivity}    
+            selectedActivity = {selectedActivity!}      
             editMode = {editMode}
             setEditMode = {setEditMode}
             setSelectedActivity = {setSelectedActivity}
@@ -97,4 +97,4 @@ const App = () => {
 
 }
 
-export default App;
+export default observer(App);
