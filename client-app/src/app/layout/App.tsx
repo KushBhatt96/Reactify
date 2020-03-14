@@ -1,6 +1,5 @@
-import React, {useState, useEffect, Fragment} from 'react';
-import { Header, Icon, List, Container } from 'semantic-ui-react'
-import logo from './logo.svg';
+import React, {useState, useEffect, Fragment, SyntheticEvent} from 'react';
+import { Container } from 'semantic-ui-react'
 import { IActivity } from '../models/activity';
 import { NavBar } from '../../features/nav/NavBar';
 import { ActivityDashboard } from '../../features/activities/dashboard/ActivityDashboard';
@@ -16,6 +15,7 @@ const App = () => {
   const [editMode, setEditMode] = useState(false);   //eidtMode state property is initially false
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [target, setTarget] = useState('');
 
 
   //this is a handler that takes an id as a parameter and then we can select the activity from our list of activites based on the passed id parameter
@@ -47,8 +47,9 @@ const App = () => {
     }).then(() => setSubmitting(false))
   }
 
-  const handleDeleteActivity = (id: string) => {
+  const handleDeleteActivity = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
     setSubmitting(true);
+    setTarget(event.currentTarget.name);
     agent.Activities.delete(id).then(()=>{
       setActivities([...activities.filter(a => a.id !==id)])
     }).then(() => setSubmitting(false))
@@ -88,6 +89,7 @@ const App = () => {
             editActivity = {handleEditActivity}
             deleteActivity = {handleDeleteActivity}
             submitting={submitting}
+            target = {target}
           />
         </Container>
       </Fragment> 

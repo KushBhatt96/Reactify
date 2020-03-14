@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { SyntheticEvent } from 'react'
 import { Item, Button, Label, Segment } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
 
@@ -7,13 +7,14 @@ import { IActivity } from '../../../app/models/activity'
 interface IProps {
     activities: IActivity[];
     selectActivity: (id: string) => void;
-    deleteActivity: (id: string) => void;
+    deleteActivity: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
     submitting: boolean;
+    target: string;
 }
 
 //Again our component here just contains a whole bunch of semantic UI elements
 //And again we've deconstructed props into activities and selectedActivity
-export const ActivityList: React.FC<IProps> = ({activities, selectActivity, deleteActivity, submitting}) => {
+export const ActivityList: React.FC<IProps> = ({activities, selectActivity, deleteActivity, submitting, target}) => {
     return (
         <Segment clearing>
         <Item.Group divided>
@@ -34,8 +35,9 @@ export const ActivityList: React.FC<IProps> = ({activities, selectActivity, dele
                         color = "blue"
                         />
                         <Button
-                        loading = {submitting}
-                        onClick = {() => deleteActivity(activity.id)}   //when we click this button our selectedActivity is goning be passed in our state in our App component 
+                        name = {activity.id}
+                        loading = {target === activity.id && submitting}
+                        onClick = {(e) => deleteActivity(e, activity.id)}   //when we click this button our selectedActivity is goning be passed in our state in our App component 
                         floated = "right" 
                         content = "delete" 
                         color = "red"

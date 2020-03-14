@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { SyntheticEvent } from 'react'
 import { Grid, GridColumn } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
 import { ActivityList } from './ActivityList'
@@ -14,8 +14,9 @@ interface IProps {               //Type checking for the props that we receive!
     setSelectedActivity: (activity: IActivity | null) => void;
     createActivity: (activity: IActivity) => void;
     editActivity: (activity: IActivity) => void;
-    deleteActivity: (id: string) => void;
+    deleteActivity: (e: SyntheticEvent<HTMLButtonElement>, id: string) => void;
     submitting: boolean;
+    target: string;
 }
 
 //instead of {activities, selectActivity,... below, we could have just said "props", but when using typescript its common to destructure the props as shown below
@@ -29,7 +30,8 @@ export const ActivityDashboard: React.FC<IProps> = ({
     createActivity,
     editActivity,
     deleteActivity,
-    submitting
+    submitting,
+    target
 }) => {
     return (      //essentially all of the stuff below are semantic ui react elements   //width in semantic UI is 16 as opposed to 12 in bootstrap
         <Grid>
@@ -39,6 +41,7 @@ export const ActivityDashboard: React.FC<IProps> = ({
                 selectActivity = {selectActivity} 
                 deleteActivity = {deleteActivity}
                 submitting = {submitting}
+                target = {target}
                 />
             </Grid.Column>
             <GridColumn width = {6}>
