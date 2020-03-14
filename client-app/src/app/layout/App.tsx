@@ -1,10 +1,10 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import { Header, Icon, List, Container } from 'semantic-ui-react'
 import logo from './logo.svg';
-import axios from 'axios';
 import { IActivity } from '../models/activity';
 import { NavBar } from '../../features/nav/NavBar';
 import { ActivityDashboard } from '../../features/activities/dashboard/ActivityDashboard';
+import agent from '../api/agent';
 
 
 
@@ -43,11 +43,10 @@ const App = () => {
   }
 
   useEffect(() => {      //Think of the useEffect Hook as a combination of componentDidMount, componentDidUpdate, and componentWillUnmount lifecycle methods
-    axios
-        .get<IActivity[]>('http://localhost:5000/API/activities')   //notice that this is the server for our backend and we are just getting API/activities
+      agent.Activities.list()
         .then(response =>{
         let activities: IActivity[] = [];
-        response.data.forEach(activity => {
+        response.forEach((activity) => {
           activity.date = activity.date.split('.')[0];
           activities.push(activity);
         })
