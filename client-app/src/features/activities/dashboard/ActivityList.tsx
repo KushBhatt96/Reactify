@@ -1,26 +1,19 @@
-import React, { SyntheticEvent, useContext } from 'react'
+import React, { useContext } from 'react'
 import { Item, Button, Label, Segment } from 'semantic-ui-react'
-import { IActivity } from '../../../app/models/activity'
 import { observer } from 'mobx-react-lite';
 import ActivityStore from '../../../app/stores/activityStore'
 
-//To reiterate, the Iprops interface is used to type check the incoming props from the parent react component
-//If the parent tries to send a prop with the incorrect type, an error message will be shown
-interface IProps {
-    deleteActivity: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
-    submitting: boolean;
-    target: string;
-}
+
 
 //Again our component here just contains a whole bunch of semantic UI elements
 //And again we've deconstructed props into activities and selectedActivity
-const ActivityList: React.FC<IProps> = ({deleteActivity, submitting, target}) => {
+const ActivityList: React.FC = () => {
     const activityStore = useContext(ActivityStore);
-    const {activities, selectActivity} = activityStore;
+    const {activitiesByDate, selectActivity, deleteActivity, submitting, target} = activityStore;
     return (
         <Segment clearing>
         <Item.Group divided>
-            {activities.map(activity => (
+            {activitiesByDate.map(activity => (
                 <Item key = {activity.id}>
                 <Item.Content>
                   <Item.Header as='a'>{activity.title}</Item.Header>
@@ -44,7 +37,7 @@ const ActivityList: React.FC<IProps> = ({deleteActivity, submitting, target}) =>
                         content = "delete" 
                         color = "red"
                         />
-                      <Label basic content = "Category" color = "blue"/>
+                      <Label basic content = {activity.category} color = "blue"/>
                   </Item.Extra>
                 </Item.Content>
                 </Item>

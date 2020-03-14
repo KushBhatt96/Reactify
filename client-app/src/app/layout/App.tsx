@@ -1,9 +1,7 @@
-import React, {useState, useEffect, Fragment, SyntheticEvent, useContext} from 'react';
+import React, {useEffect, Fragment, useContext} from 'react';
 import { Container } from 'semantic-ui-react'
-import { IActivity } from '../models/activity';
-import { NavBar } from '../../features/nav/NavBar';
+import NavBar from '../../features/nav/NavBar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
-import agent from '../api/agent';
 import { LoadingComponent } from './LoadingComponent';
 import ActivityStore from '../stores/activityStore'
 import {observer} from 'mobx-react-lite';
@@ -13,53 +11,6 @@ import {observer} from 'mobx-react-lite';
 const App = () => {
 
   const activityStore = useContext(ActivityStore);
-
-
-  //below are all state properties, that each have their own setState function --> we are using hooks to create them
-  const [activities, setActivities] = useState<IActivity[]>([]) //we are setting the default state of our activities as an empty array and ensuring type safety by making it an IActivity
-  const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);  //the selectedActivity can be of type IActivity OR null, then we can pass null as the initial state
-  const [editMode, setEditMode] = useState(false);   //eidtMode state property is initially false
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [target, setTarget] = useState('');
-
-
-  //this is a handler that takes an id as a parameter and then we can select the activity from our list of activites based on the passed id parameter
-  const handleSelectActivity = (id: String) =>{
-    setSelectedActivity(activities.filter(a => a.id === id)[0])    //[0] to get the 0th (and only) element of the resulting array from filter
-    setEditMode(false);
-  }
-
-  const handleOpenCreateForm = () => {
-    setSelectedActivity(null);
-    setEditMode(true);
-  }
-
-  const handleCreateActivity = (activity: IActivity) => {
-    setSubmitting(true);
-    agent.Activities.create(activity).then(()=>{      //then only occurs once the create method has completed to store the activity on the server
-      setActivities([...activities, activity])
-      setSelectedActivity(activity)
-      setEditMode(false)
-    }).then(() => setSubmitting(false))
-  }
-
-  const handleEditActivity = (activity: IActivity) => {
-    setSubmitting(true);
-    agent.Activities.update(activity).then(()=>{
-      setActivities([...activities.filter(a => a.id !== activity.id), activity])
-      setSelectedActivity(activity);
-      setEditMode(false);
-    }).then(() => setSubmitting(false))
-  }
-
-  const handleDeleteActivity = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
-    setSubmitting(true);
-    setTarget(event.currentTarget.name);
-    agent.Activities.delete(id).then(()=>{
-      setActivities([...activities.filter(a => a.id !==id)])
-    }).then(() => setSubmitting(false))
-  }
 
   useEffect(() => {      //Think of the useEffect Hook as a combination of componentDidMount, componentDidUpdate, and componentWillUnmount lifecycle methods
     activityStore.loadActivities();
@@ -76,19 +27,9 @@ const App = () => {
     //to show to the screen!
     return ( 
       <Fragment>  
-        <NavBar openCreateForm = {handleOpenCreateForm}/>
+        <NavBar/>
         <Container style = {{marginTop: "7em"}}>
-          <ActivityDashboard 
-            activities = {activityStore.activities} 
-            selectActivity = {handleSelectActivity}    
-            setEditMode = {setEditMode}
-            setSelectedActivity = {setSelectedActivity}
-            createActivity = {handleCreateActivity}
-            editActivity = {handleEditActivity}
-            deleteActivity = {handleDeleteActivity}
-            submitting={submitting}
-            target = {target}
-          />
+          <ActivityDashboard />
         </Container>
       </Fragment> 
     );

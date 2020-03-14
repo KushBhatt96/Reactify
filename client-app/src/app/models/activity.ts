@@ -5,8 +5,8 @@ export interface IActivity {    //This represents a single activity
     id: string;
     title: string;
     description: string;
-    category: String;
-    date: String;
-    city: String;
-    venue: String;
+    category: string;
+    date: string;
+    city: string;
+    venue: string;
 }

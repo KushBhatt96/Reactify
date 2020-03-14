@@ -1,62 +1,34 @@
-import React, { SyntheticEvent, useContext } from 'react'
+import React, { useContext } from 'react'
 import { Grid, GridColumn } from 'semantic-ui-react'
-import { IActivity } from '../../../app/models/activity'
 import ActivityList from './ActivityList'
 import ActivityDetails from '../details/ActivityDetails'
-import { ActivityForm } from '../form/ActivityForm'
+import ActivityForm from '../form/ActivityForm'
 import { observer } from 'mobx-react-lite'
 import ActivityStore from '../../../app/stores/activityStore'
 
-interface IProps {               //Type checking for the props that we receive!
-    activities: IActivity[];
-    selectActivity: (id: string) => void;        //selectActivity is a function passed from the parent, it takes in an id of type string, and returns void
-    setEditMode: (editMode: boolean) => void      //setEditMode function expected as a prop from the parent
-    setSelectedActivity: (activity: IActivity | null) => void;
-    createActivity: (activity: IActivity) => void;
-    editActivity: (activity: IActivity) => void;
-    deleteActivity: (e: SyntheticEvent<HTMLButtonElement>, id: string) => void;
-    submitting: boolean;
-    target: string;
-}
+
 
 //instead of {activities, selectActivity,... below, we could have just said "props", but when using typescript its common to destructure the props as shown below
-const ActivityDashboard: React.FC<IProps> = ({
-    activities, 
-    selectActivity,
-    setEditMode, 
-    setSelectedActivity,
-    createActivity,
-    editActivity,
-    deleteActivity,
-    submitting,
-    target
-}) => {
+const ActivityDashboard: React.FC = () => {
     const activityStore = useContext(ActivityStore)
     const {editMode, selectedActivity} = activityStore;    //now editMode and selectedActivity are no longer props but are coming from our store!
     return (      //essentially all of the stuff below are semantic ui react elements   //width in semantic UI is 16 as opposed to 12 in bootstrap
         <Grid>
+
             <Grid.Column width = {10}>
-                <ActivityList 
-                deleteActivity = {deleteActivity}
-                submitting = {submitting}
-                target = {target}
-                />
+                <ActivityList />
             </Grid.Column>
+
             <GridColumn width = {6}>
-                {selectedActivity && !editMode && 
-                (<ActivityDetails 
-                    setEditMode={setEditMode}
-                    setSelectedActivity = {setSelectedActivity}
-                 />)}
-                {editMode && <ActivityForm 
+                {selectedActivity && !editMode && (<ActivityDetails />)}
+
+                {editMode && 
+                <ActivityForm 
                 key={selectedActivity && selectedActivity.id || 0}     //adding a key here allows us to re=render state?? (go over this)
-                setEditMode = {setEditMode} 
-                activity={selectedActivity!} 
-                createActivity = {createActivity} 
-                editActivity = {editActivity}
-                submitting = {submitting}
+                activity={selectedActivity!}
                 />}
             </GridColumn>
+            
         </Grid>
     )
 };
