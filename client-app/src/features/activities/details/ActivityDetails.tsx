@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { Card, Image, Button } from 'semantic-ui-react'
 import ActivityStore from '../../../app/stores/activityStore'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, Link } from 'react-router-dom';
 import { LoadingComponent } from '../../../app/layout/LoadingComponent';
 
 interface DetailParams {
@@ -13,7 +13,7 @@ interface DetailParams {
 //Below we are loading a particular picture from the public/assets folder based on the selectedActivity activity
 //The RouteComponentProps give us access to history, location, match, staticContext props passed from route component
 //Having ReactComponentProps take type parameter DetailParams allows use to access match.params.id
-const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({match}) => {
+const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({match, history}) => {
   const activityStore = useContext(ActivityStore);
   const {
     activity, 
@@ -43,8 +43,8 @@ const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({match}) =
         </Card.Content>
         <Card.Content extra>
             <Button.Group widths = {2}>
-                <Button onClick={()=>openEditForm(activity!.id)} basic color="blue" content = "Edit"/>
-                <Button onClick={cancelSelectedActivity} basic color="grey" content = "Cancel"/>
+                <Button as={Link} to={`/manage/${activity.id}`} basic color="blue" content = "Edit"/>
+                <Button onClick={() => history.push('/activities')} basic color="grey" content = "Cancel"/>
             </Button.Group>
         </Card.Content>
       </Card>
