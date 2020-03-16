@@ -11,25 +11,17 @@ interface DetailParams {
     id: string
 }
 
-const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({match}) => {
+const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({match, history}) => {
     
     const activityStore = useContext(ActivityStore);
     const {
         createActivity, 
         editActivity, 
         submitting, 
-        cancelFormOpen, 
         activity: initialFormState,
-        loadActivity
+        loadActivity,
+        clearActivity
     } = activityStore;
-
-    useEffect(() => {
-        if (match.params.id) {
-            loadActivity(match.params.id).then(
-                () => initialFormState && setActivity(initialFormState)
-                );
-        }
-    });
 
     const [activity, setActivity] = useState<IActivity>({
         id: '',
@@ -40,6 +32,17 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({match}) => {
         city: '',
         venue: ''
     });
+
+    useEffect(() => {
+        if (match.params.id && activity.id.length === 0) {
+            loadActivity(match.params.id).then(
+                () => initialFormState && setActivity(initialFormState)
+                );
+        }
+        return  () => {
+            clearActivity();
+        }
+    }, [loadActivity, clearActivity, match.params.id, initialFormState, activity.id.length]);
 
     const handleInputChange = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => {   //event that we get from our onchange handler
         const {name, value} = event.currentTarget;
@@ -52,9 +55,9 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({match}) => {
                 ...activity,
                 id: uuid()    //this creates a guid for our new activity
             }
-            createActivity(newActivity);
+            createActivity(newActivity).then(() => history.push(`/activities/${newActivity.id}`));
         }else {
-            editActivity(activity);
+            editActivity(activity).then(() => history.push(`/activities/${activity.id}`));
         }
     }
 
@@ -102,7 +105,7 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({match}) => {
                     />
                     <Button loading={submitting} floated='right' positive type = 'submit' content = "Submit" />
                     <Button 
-                    onClick={cancelFormOpen} 
+                    onClick={() => history.push('/activities')}
                     floated='right' 
                     type = 'button' 
                     content = "Cancel" />

@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 //And again we've deconstructed props into activities and selectedActivity
 const ActivityList: React.FC = () => {
     const activityStore = useContext(ActivityStore);
-    const {activitiesByDate, selectActivity, deleteActivity, submitting, target} = activityStore;
+    const {activitiesByDate, deleteActivity, submitting, target} = activityStore;
     return (
         <Segment clearing>
         <Item.Group divided>
