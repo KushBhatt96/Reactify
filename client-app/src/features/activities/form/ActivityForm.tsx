@@ -1,5 +1,5 @@
 import React, {useState, FormEvent, useContext, useEffect} from 'react'
-import { Form, Segment, Button } from 'semantic-ui-react'
+import { Form, Segment, Button, Grid } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
 import {v4 as uuid} from 'uuid';
 import { observer } from 'mobx-react-lite';
@@ -62,7 +62,8 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({match, histo
     }
 
     return (
-        <div>
+        <Grid>
+            <Grid.Column width={10}>
             <Segment clearing>
                 <Form onSubmit = {handleSubmit}>
                     <Form.Input
@@ -111,7 +112,8 @@ const ActivityForm: React.FC<RouteComponentProps<DetailParams>> = ({match, histo
                     content = "Cancel" />
                 </Form>
             </Segment>
-        </div>
+            </Grid.Column>
+        </Grid>
     )
 };
 
