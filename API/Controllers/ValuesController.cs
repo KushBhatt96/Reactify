@@ -17,7 +17,7 @@ namespace DatingApp.API.Controllers
         public ValuesController(DataContext context)  //now we have access to our DataContext inside our ValuesController
         {
             _context = context;
-
+            
 
         }
 
@@ -34,6 +34,11 @@ namespace DatingApp.API.Controllers
         public async Task<ActionResult<Value>> Get(int id)
         {
             var value = await _context.Values.FindAsync(id);
+
+            if (value == null){
+                return NotFound();
+            }
+
             return Ok(value);
         }
 

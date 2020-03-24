@@ -17,7 +17,7 @@ interface DetailParams {
 //Below we are loading a particular picture from the public/assets folder based on the selectedActivity activity
 //The RouteComponentProps give us access to history, location, match, staticContext props passed from route component
 //Having ReactComponentProps take type parameter DetailParams allows use to access match.params.id
-const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({match}) => {
+const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({match, history}) => {
   const activityStore = useContext(ActivityStore);
   const {
     activity, 
@@ -26,10 +26,14 @@ const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({match}) =
   } = activityStore;   //simple destructing of array
 
   useEffect(() =>{
-    loadActivity(match.params.id)
-  }, [loadActivity, match.params.id])  //only want to run useEffect once!!
+    loadActivity(match.params.id);
+  }, [loadActivity, match.params.id, history])  //only want to run useEffect once!!
 
-  if(loadingInitial || !activity) return <LoadingComponent content="loading activity..."/>
+  if(loadingInitial) return <LoadingComponent content="loading activity..."/>
+
+  if(!activity){
+    return <h2>Activity not found.</h2>
+  }
 
     return (
       <Grid>
