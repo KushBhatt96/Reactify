@@ -6,7 +6,11 @@ export interface IActivity {    //This represents a single activity
     title: string;
     description: string;
     category: string;
-    date: string;
+    date: Date;
     city: string;
     venue: string;
+}
+
+export interface IActivityFormValues extends Partial<IActivity>{
+    time?: Date
 }
