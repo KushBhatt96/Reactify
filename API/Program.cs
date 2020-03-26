@@ -1,5 +1,7 @@
 using System;
+using Domain;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,8 +20,9 @@ namespace API
                 var Services = scope.ServiceProvider;
                 try{
                     var context = Services.GetRequiredService<DataContext>();
+                    var userManager = Services.GetRequiredService<UserManager<AppUser>>();
                     context.Database.Migrate(); //anytime we start the app, we'll check if DB exists, if not one will be created
-                    Seed.SeedData(context);
+                    Seed.SeedData(context, userManager).Wait();
                     //based on our migrations
                 }
                 catch(Exception ex){

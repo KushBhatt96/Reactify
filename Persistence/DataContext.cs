@@ -1,9 +1,10 @@
 ﻿using Domain;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence
 {
-    public class DataContext : DbContext   //DataContext extends DbContext class provided by Entity Framework Core
+    public class DataContext : IdentityDbContext<AppUser>   //DataContext extends DbContext class provided by Entity Framework Core
     {
         //below we are creating a constructor for the DataContext class and passing it a DbContextOptions object called "options"
         //we then pass the "options" to the base DbContext class using --> : base(options)
@@ -21,6 +22,9 @@ namespace Persistence
         public DbSet<Activity> Activities {get; set;}
 
         protected override void OnModelCreating(ModelBuilder builder){  //seeding data in DB using entity framework
+
+            base.OnModelCreating(builder);  //not having this results in error
+
             builder.Entity<Value>().HasData(
                 new Value {Id = 1, Name = "Value101"},
                 new Value {Id = 2, Name = "Value102"},
