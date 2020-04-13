@@ -3,19 +3,20 @@ import { Grid, GridColumn } from 'semantic-ui-react'
 import ActivityList from './ActivityList'
 import { observer } from 'mobx-react-lite'
 import { LoadingComponent } from '../../../app/layout/LoadingComponent';
-import ActivityStore from '../../../app/stores/activityStore'
+import { RootStoreContext } from '../../../app/stores/rootStore';
 
 //instead of {activities, selectActivity,... below, we could have just said "props", but when using typescript its common to destructure the props as shown below
 const ActivityDashboard: React.FC = () => {
 
-    const activityStore = useContext(ActivityStore);
+    const rootStore = useContext(RootStoreContext);
+    const {loadActivities, loadingInitial} = rootStore.activityStore;
 
     useEffect(() => {      //Think of the useEffect Hook as a combination of componentDidMount, componentDidUpdate, and componentWillUnmount lifecycle methods
-      activityStore.loadActivities();
-    }, [activityStore]); //activityStore as a dependecy when using stores//this empty array here is preventing the useEffect from running again and again after our component has mounted 
+      loadActivities();
+    }, [loadActivities]); //activityStore as a dependecy when using stores//this empty array here is preventing the useEffect from running again and again after our component has mounted 
   
   
-    if (activityStore.loadingInitial) return <LoadingComponent content = 'Loading activities...'/>
+    if (loadingInitial) return <LoadingComponent content = 'Loading activities...'/>
 
     
     return (      //essentially all of the stuff below are semantic ui react elements   //width in semantic UI is 16 as opposed to 12 in bootstrap

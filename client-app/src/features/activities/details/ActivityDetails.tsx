@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react'
 import { Grid } from 'semantic-ui-react'
-import ActivityStore from '../../../app/stores/activityStore'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from 'react-router-dom';
 import { LoadingComponent } from '../../../app/layout/LoadingComponent';
@@ -8,6 +7,7 @@ import ActivityDetailedChat from './ActivityDetailedChat';
 import ActivityDetailedHeader from './ActivityDetailedHeader';
 import ActivityDetailedInfo from './ActivityDetailedInfo';
 import ActivityDetailedSidebar from './ActivityDetailedSidebar';
+import { RootStoreContext } from '../../../app/stores/rootStore';
 
 interface DetailParams {
   id: string
@@ -18,12 +18,12 @@ interface DetailParams {
 //The RouteComponentProps give us access to history, location, match, staticContext props passed from route component
 //Having ReactComponentProps take type parameter DetailParams allows use to access match.params.id
 const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({match, history}) => {
-  const activityStore = useContext(ActivityStore);
+  const rootStore = useContext(RootStoreContext);
   const {
     activity, 
     loadActivity, 
     loadingInitial
-  } = activityStore;   //simple destructing of array
+  } = rootStore.activityStore;   //simple destructing of array
 
   useEffect(() =>{
     loadActivity(match.params.id);
