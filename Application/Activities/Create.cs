@@ -1,9 +1,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Activities
@@ -43,8 +45,10 @@ namespace Application.Activities
         public class Handler : IRequestHandler<Command> //this is another inner class that derives from IRequestHandler class of type Command
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IUserAccessor _userAccessor;
+            public Handler(DataContext context, IUserAccessor userAccessor)
             {
+                _userAccessor = userAccessor;
                 _context = context;
             }
 
@@ -62,9 +66,23 @@ namespace Application.Activities
                 };
 
                 _context.Activities.Add(activity);
+
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName ==
+                _userAccessor.GetCurrentUsername());
+
+                var attendee = new UserActivity
+                {
+                    AppUser = user,
+                    Activity = activity,
+                    IsHost = true,
+                    DateJoined = DateTime.Now
+                };
+
+                _context.UserActivities.Add(attendee);
+
                 var success = await _context.SaveChangesAsync() > 0;  //success is a boolean checking if request was successful
 
-                if(success)
+                if (success)
                 {
                     return Unit.Value;
                 }

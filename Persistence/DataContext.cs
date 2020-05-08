@@ -8,7 +8,7 @@ namespace Persistence
     {
         //below we are creating a constructor for the DataContext class and passing it a DbContextOptions object called "options"
         //we then pass the "options" to the base DbContext class using --> : base(options)
-        public DataContext(DbContextOptions options) : base(options)   
+        public DataContext(DbContextOptions options) : base(options)
         {
 
         }
@@ -19,17 +19,32 @@ namespace Persistence
         public DbSet<Value> Values { get; set; }
 
         //list of Activities
-        public DbSet<Activity> Activities {get; set;}
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<UserActivity> UserActivities { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder){  //seeding data in DB using entity framework
+        protected override void OnModelCreating(ModelBuilder builder)
+        {  //seeding data in DB using entity framework
 
             base.OnModelCreating(builder);  //not having this results in error
 
             builder.Entity<Value>().HasData(
-                new Value {Id = 1, Name = "Value101"},
-                new Value {Id = 2, Name = "Value102"},
-                new Value {Id = 3, Name = "Value103"}
+                new Value { Id = 1, Name = "Value101" },
+                new Value { Id = 2, Name = "Value102" },
+                new Value { Id = 3, Name = "Value103" }
             ); //this will create a migration which will then try to insert the above values into our values table
+
+            builder.Entity<UserActivity>(x => x.HasKey(ua => 
+                new { ua.AppUserId, ua.ActivityId }));
+
+            builder.Entity<UserActivity>()
+                .HasOne(u => u.AppUser)
+                .WithMany(a => a.UserActivities)
+                .HasForeignKey(u => u.AppUserId);
+
+            builder.Entity<UserActivity>()
+                .HasOne(a => a.Activity)
+                .WithMany(u => u.UserActivities)
+                .HasForeignKey(a => a.ActivityId);
         }
 
     }
