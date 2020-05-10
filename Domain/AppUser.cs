@@ -8,7 +8,7 @@ namespace Domain
         
         public string DisplayName { get; set; }
         
-        public ICollection<UserActivity> UserActivities { get; set; }
+        public virtual ICollection<UserActivity> UserActivities { get; set; }
         
     }
 }
