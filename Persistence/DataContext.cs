@@ -21,6 +21,7 @@ namespace Persistence
         //list of Activities
         public DbSet<Activity> Activities { get; set; }
         public DbSet<UserActivity> UserActivities { get; set; }
+        public DbSet<Photo> Photos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {  //seeding data in DB using entity framework
@@ -33,7 +34,7 @@ namespace Persistence
                 new Value { Id = 3, Name = "Value103" }
             ); //this will create a migration which will then try to insert the above values into our values table
 
-            builder.Entity<UserActivity>(x => x.HasKey(ua => 
+            builder.Entity<UserActivity>(x => x.HasKey(ua =>
                 new { ua.AppUserId, ua.ActivityId }));
 
             builder.Entity<UserActivity>()

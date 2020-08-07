@@ -14,6 +14,8 @@ namespace Application.Activities
     {
         public class Command : IRequest  //Note that this is an inner class that inherits from IRequest class
         {
+            //I reckon that these are all the variables required to be passed in, when trying to create
+            //a new Activity --> resembles the Activity entity class
             public Guid Id { get; set; }
 
             public string Title { get; set; }
